@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <math.h>
+
+void a_sinifi(int O1, int O2, int O3, int O4, int ias);
+void b_sinifi(int O1, int O2, int O3, int O4, int ias);
+void c_sinifi(int O1, int O2, int O3, int O4, int ias);
+
+int main()
+{
+    int o1, o2, o3, o4, ias, i, a;
+
+    printf("Lutfen ip adresinizi nokta yerine boşluk karakteri kullanarak giriniz.\n IP = ");
+    scanf("%d %d %d %d", &o1, &o2, &o3, &o4);
+
+    printf("Kac alt ağ istiyorsunuz: ");
+    scanf("%d", &ias);
+
+    for (i = 0; i <= 1000; i++)
+    {
+        if (pow(2, i) >= ias)
+        {
+            a = i;
+            break;
+        }
+    }
+
+    if (o1 > 0 && o1 < 256 && o2 > 0 && o2 < 256 && o3 > 0 && o3 < 256 && o4 > 0 && o4 < 256)
+    {
+        if (o1 <= 126 && o1 > 0)
+        {
+            a_sinifi(o1, o2, o3, o4, a);
+        }
+        else if (o1 < 192 && o1 > 127)
+        {
+            b_sinifi(o1, o2, o3, o4, a);
+        }
+        else if (o1 < 225 && o1 > 191)
+        {
+            c_sinifi(o1, o2, o3, o4, a);
+        }
+    }
+    else
+    {
+        printf("Hatali bir IP girdiniz");
+    }
+
+    return 0;
+}
+
+void a_sinifi(int O1, int O2, int O3, int O4, int ias)
+{
+	int op;
+	scanf("%d",&op);
+    int sifirlar = 24 - ias;
+    int i, j, k, c;
+
+    if (sifirlar > 16)
+    {
+        sifirlar = sifirlar - 16;
+        for (i = 0; i < 256; i++)
+        {
+            c = i;
+            printf("%d.%d.0.0", O1, i);
+
+            i = i + (pow(2, sifirlar) - 1);
+
+            printf("       %d.%d.255.255       ", O1, i);
+
+            printf("       %d.%d.0.1 - %d.%d.255.254       ", O1, c, O1, i);
+
+            printf("\n");
+        }
+    }
+    else if (sifirlar > 8)
+    {
+        sifirlar = sifirlar - 8;
+
+        for (i = 0; i < 256; i++)
+        {
+            for (j = 0; j < 256; j++)
+            {
+                c = j;
+                printf("%d.%d.%d.0", O1, i, j);
+
+                j = j + (pow(2, sifirlar) - 1);
+
+                printf("       %d.%d.%d.255       ", O1, i, j);
+
+                printf("       %d.%d.%d.1 - %d.%d.%d.254       ", O1, i, c, O1, i, j);
+            }
+            printf("\n");
+        }
+    }
+    else
+    {
+        for (i = 0; i < 256; i++)
+        {
+            for (j = 0; j < 256; j++)
+            {
+                for (k = 0; k < 256; k++)
+                {
+                    c = k - 1;
+                    printf("%d.%d.%d.%d", O1, i, j, k);
+
+                    k = k + (pow(2, sifirlar) - 1);
+
+                    printf("       %d.%d.%d.%d       ", O1, i, j, k);
+
+                    printf("              %d.%d.%d.%d - %d.%d.%d.%d       ", O1, i, j, c, O1, i, j, k);
+
+                    printf("\n");
+                }
+            }
+        }
+    }
+}
+
+void b_sinifi(int O1, int O2, int O3, int O4, int ias)
+{
+    int sifirlar = 16 - ias;
+    int i, j, c;
+    printf("  Network      Broadcast                        Host araliklari \n");
+    if (sifirlar < 9)
+    {
+        for (i = 0; i < 256; i++)
+        {
+            for (j = 0; j < 256; j++)
+            {
+                printf("%d.%d.%d.%d ", O1, O2, i, j);
+                c = j;
+                j = j + (pow(2, sifirlar) - 1);
+
+                printf("       %d.%d.%d.%d             ", O1, O2, i, j);
+
+                printf("           %d.%d.%d.%d - %d.%d.%d.%d           ", O1, O2, i, c + 1, O1, O2, i, j - 1);
+            }
+            printf("\n");
+        }
+    }
+    else
+    {
+        sifirlar = sifirlar - 8;
+        for (i = 0; i < 256; i++)
+        {
+            c = i;
+            printf("%d.%d.%d.0", O1, O2, i);
+
+            i = i + (pow(2, sifirlar) - 1);
+            printf("      %d.%d.%d.255             ", O1, O2, i);
+
+            printf("             %d.%d.%d.1 - %d.%d.%d.254", O1, O2, c + 1, O1, O2, i - 1);
+
+            printf("\n");
+        }
+    }
+}
+
+void c_sinifi(int O1, int O2, int O3, int O4, int ias)
+{
+    int sifirlar = 8 - ias;
+    int i, c, j;
+
+    printf("  Network      Broadcast             Host araliklari \n");
+    for (i = 0; i < 256; i++)
+    {
+        c = i;
+        printf("%d.%d.%d.%d ", O1, O2, O3, i);
+
+        i = i + (pow(2, sifirlar) - 1);
+
+        printf("     %d.%d.%d.%d ", O1, O2, O3, i);
+
+        for (j = c + 1; j < i; j++)
+        {
+            if (j == c + 1)
+            {
+                printf("    %d.%d.%d.%d - ", O1, O2, O3, j);
+            }
+            if (j == i - 1)
+            {
+                printf("%d.%d.%d.%d", O1, O2, O3, j);
+            }
+        }
+        printf("\n");
+    }
+
+    printf(" bu kadar");
+}
