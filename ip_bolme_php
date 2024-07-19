@@ -23,7 +23,7 @@ if($dizi[0]>0 && $dizi[0]<=255 && $dizi[1]>=0 && $dizi[1]<=255 && $dizi[2]>=0 &&
     <table border="2">
         <tr><td>Network</td><td>Broadcast</td><td> Host IP aralığı</td></tr>
     <?php
-    include("fonksiyon.php");
+    //include("fonksiyon.php");
     $ias = ag_bul($_POST["ias"]);
     if($dizi[0]<127 && $dizi[0]>0)
     {
@@ -43,6 +43,123 @@ if($dizi[0]>0 && $dizi[0]<=255 && $dizi[1]>=0 && $dizi[1]<=255 && $dizi[2]>=0 &&
     }
 }
 }
+?>
+//fonksiyon.php dosyası
+<?php
+
+function ag_bul($ias)
+{
+    $iass;
+
+    for($i=0;$i<1000;$i++)
+    {
+        if(pow(2,$i)>=$ias)
+        {
+            $iass=$i;
+            break;
+        }
+    }
+    return $iass;
+}
+
+function a_sinifi($o1,$o2,$o3,$o4,$ias)
+{
+    $sifirlar=24-$ias;
+    if($sifirlar>16)
+    {
+        $sifirlar=$sifirlar-16;
+
+        for($i=0;$i<256;$i++)
+        {
+            $i0=(pow(2,$sifirlar)-1)+$i;
+            echo "<tr><td>$o1.$i.0.0</td><td>$o1.$i0.255.255</td><td>$o1.$i.0.1 - $o1.$i0.255.254</td></tr>";
+            $i=$i0;
+        }
+    }
+    else if($sifirlar>8)
+    {
+        $sifirlar=$sifirlar-8;
+
+        for($i=0;$i<256;$i++)
+        {
+            for($j=0;$j<256;$j++)
+            {
+                $j0=(pow(2,$sifirlar)-1)+$j;
+
+                echo "<tr> <td>$o1.$i.$j.0</td><td>$o1.$i.$j0.255</td><td>$o1.$i.$j.1 - $o1.$i.$j0.254</td></tr>";
+
+                $j=$j0;
+            }
+        }
+    }
+    else
+    {
+        for($i=0;$i<256;$i++)
+        {
+            for($j=0;$j<256;$j++)
+            {
+                for($k=0;$k<256;$k++)
+                {
+                    $k0=(pow(2,$sifirlar)-1)+$k;
+
+                    echo "<tr> <td>$o1.$i.$j.$k</td><td>$o1.$i.$j.$k0</td><td> $o1.$i.$j.".++$k." - $o1.$i.$j.".--$k0."</td></tr>";
+
+                    $k=$k0+1;
+                }
+            }
+        }
+    }
+    echo "</table>";
+}
+
+function b_sinifi($o1,$o2,$o3,$o4,$ias)
+{
+    $sifirlar=16-$ias;
+
+    if($sifirlar<9)
+    {
+        for($i=0;$i<256;$i++)
+        {
+            for($j=0;$j<256;$j++)
+            {
+            $j0=(pow(2,$sifirlar)-1)+$j;
+            echo "<tr> <td>$o1.$o2.$i.$j</td><td>$o1.$o2.$i.$j0</td><td>$o1.$o2.$i.".++$j." - $o1.$o2.$i.".--$j0."</td></tr>";
+            $j=$j0+1;
+            }
+        }
+    }
+    else
+    {
+        
+        $sifirlar=$sifirlar-8;
+
+        for($i=0;$i<=255;$i++)
+        {
+            $i0=(pow(2,$sifirlar)-1)+$i;
+            echo "<tr> <td>$o1.$o2.$i.0</td><td>$o1.$o2.$i0.255</td><td> $o1.$o2.$i.1 - $o1.$o2.$i0.254</td></tr>";
+            $i=$i0;
+        }
+    }
+    echo "</table>";
+}
+
+function c_sinifi($o1,$o2,$o3,$o4,$ias)
+{
+   $sifirlar = 8-$ias;
+   
+   
+    $artis=pow(2,$sifirlar)-1;
+   
+   for($i=0;$i<=255;$i++)
+   {
+    $i0=$artis+$i;
+    echo "<tr> <td>$o1.$o2.$o3.$i</td> <td>$o1.$o2.$o3.$i0</td><td>$o1.$o2.$o3.".++$i." - $o1.$o2.$o3.".--$i0."</td></tr>";
+    $i=$i0+1;
+   }
+   
+    echo "</table>";
+}
+
 ?>
 </body>
 </html>
