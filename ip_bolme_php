@@ -1,1 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="post" action="" name="ip">
+        IP adresini giriniz : <input type="number" name="o1" min="1"max="255"  width="3"required>.<input type="number" name="o2" min="0"max="255"  required>.<input type="number" name="o3" min="0"max="255"  required>.<input type="number" name="o4" min="0"max="255"  required><br>
+       <br> İstenilen alt ağ sayısı : <input type="number" name="ias" required> <br>
+        <input type="submit" name="ok">
+</form>
 
+<?php
+if(isset($_POST["ok"]))
+{
+$dizi = array($_POST["o1"],$_POST["o2"],$_POST["o3"],$_POST["o4"]);
+
+if($dizi[0]>0 && $dizi[0]<=255 && $dizi[1]>=0 && $dizi[1]<=255 && $dizi[2]>=0 && $dizi[2]<=255 && $dizi[3]>=0 && $dizi[3]<=255)
+{
+    ?>
+    <table border="2">
+        <tr><td>Network</td><td>Broadcast</td><td> Host IP aralığı</td></tr>
+    <?php
+    include("fonksiyon.php");
+    $ias = ag_bul($_POST["ias"]);
+    if($dizi[0]<127 && $dizi[0]>0)
+    {
+        a_sinifi($dizi[0],$dizi[1],$dizi[2],$dizi[3],$ias);
+    }
+    else if($dizi[0]<192 && $dizi[0]>127)
+    {
+        b_sinifi($dizi[0],$dizi[1],$dizi[2],$dizi[3],$ias);
+    }
+    else if($dizi[0]<224 && $dizi[0]>191)
+    {
+        c_sinifi($dizi[0],$dizi[1],$dizi[2],$dizi[3],$ias);
+    }
+    else
+    {
+        error();
+    }
+}
+}
+?>
+</body>
+</html>
